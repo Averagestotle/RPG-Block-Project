@@ -7,7 +7,7 @@ using UnityEngine.AI;
 public class PlayerMoveScript : MonoBehaviour
 {
     
-    public GameObject target;
+    //public GameObject target;
     public Camera camera;
     public LayerMask layerMask;
     private GameObject player;
@@ -37,7 +37,7 @@ public class PlayerMoveScript : MonoBehaviour
 
     private void TriggerNavigation()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hitInfo;            
@@ -45,11 +45,7 @@ public class PlayerMoveScript : MonoBehaviour
             if (Physics.Raycast(ray, out hitInfo, Mathf.Infinity, layerMask))
             {
                 print(hitInfo.collider.gameObject.name);
-                destinationTarget = hitInfo.point;
-
-                // pointTransform = hitInfo.point; TODO: Figure out how to get this damn point to point towards where the mouse clicked not the object it hit's tranform.
-
-                //objectToPlace.rotation = Quaternion.FromToRotation(Vector3.up, hitInfo.normal);                
+                destinationTarget = hitInfo.point;               
             }
         }
 
