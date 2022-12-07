@@ -8,7 +8,9 @@ public class CameraBehavior : MonoBehaviour
 
     // Attach to Parent Camera prefab
     public Transform cameraTransform;
-    // Attach to Parent Player prefab, or anything you'd like it to follow
+    public Camera cameraObject;
+    // Attach to Parent Player prefab, 
+    // or anything you'd like it to follow
     public Transform targetTransform;
 
     // Determines how "smooth" the camera will be. 
@@ -19,24 +21,70 @@ public class CameraBehavior : MonoBehaviour
     // How far with the camera rotate per frame.
     public float rotationAmount;
     // How far with the camera scroll in/out per frame.
-    public float scrollSpeed;
+    public float scrollSpeed;   
+    
+    public float minZoomAllowed;
+    public float maxZoomAllowed;
+    public int initZoomLength;
+    public float currentZoomLevel;
 
     // The starting position of where the camera will be,
     // modify the z axis if you want the camera to be further
-    // away from the target.
-    public Vector3 newPosition;
-    public Vector3 zoomAmount;
-    public Vector3 newZoom;
-    public float minZoomAllowed;
-    public float maxZoomAllowed;
     public Quaternion newRotation;
+    
+    private Vector3 normalizedCameraPosition;
+    private Vector3 newPosition;
+
+    private void Awake()
+    {
+        SetupPerspectiveCameraOrbit(cameraObject, new Vector3(initZoomLength, initZoomLength, 0f), initZoomLength);
+    }
 
     // Start is called before the first frame update
     void Start()
     {
         newPosition = targetTransform.position;
         newRotation = transform.rotation;
-        newZoom = cameraTransform.localPosition;
+    }
+
+    public void SetupPerspectiveCameraOrbit(Camera cam, Vector3 offset, float initialZoomLength)
+    {
+        normalizedCameraPosition = new Vector3(0f, Mathf.Abs(offset.y), -Mathf.Abs(offset.x)).normalized;
+        currentZoomLevel = initialZoomLength;
+        PositionCamera(cam);
+    }
+
+    private void PositionCamera(Camera cam)
+    {
+        cam.transform.localPosition = normalizedCameraPosition * currentZoomLevel;
+    }
+
+    private void ZoomIn(Camera cam, float delta, float nearZoomLimit)
+    {
+        if (currentZoomLevel <= nearZoomLimit) return;
+
+        currentZoomLevel = currentZoomLevel - delta;
+
+        if (currentZoomLevel <= nearZoomLimit) 
+        {
+            currentZoomLevel = nearZoomLimit;
+        }
+        
+        PositionCamera(cam);
+    }
+
+    private void ZoomOut(Camera cam, float delta, float farZoomLimit)
+    {
+        if (currentZoomLevel >= farZoomLimit) return;
+
+        currentZoomLevel = currentZoomLevel + delta;
+
+        if (currentZoomLevel >= farZoomLimit) 
+        {
+            currentZoomLevel = farZoomLimit;
+        }
+
+        PositionCamera(cam);
     }
 
     // Update is called once per frame
@@ -61,27 +109,31 @@ public class CameraBehavior : MonoBehaviour
 
     private void HandleRotateScollInput()
     {
-        Vector3 zoomCalcValue = new Vector3();
+        if (Input.GetMouseButton(1))
+        {
+            newRotation *= Quaternion.Euler(Vector3.up * Input.GetAxis("Mouse X") * rotationAmount);
+        }
 
         if (Input.GetKey(KeyCode.Q))
         {
             newRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
         }
+
         if (Input.GetKey(KeyCode.E))
         {
             newRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
         }
-        
-        newZoom += new Vector3(zoomAmount.x, (zoomAmount.y * scrollSpeed) * Input.mouseScrollDelta.y, (zoomAmount.z * scrollSpeed) * Input.mouseScrollDelta.y);
-        // newZoom += new Vector3(Mathf.Clamp(zoomCalcValue.x, minZoomAllowed, maxZoomAllowed), 
-        //                       (Mathf.Clamp(zoomCalcValue.y, minZoomAllowed, maxZoomAllowed) * scrollSpeed) * Input.mouseScrollDelta.y, (
-        //                       Mathf.Clamp(zoomCalcValue.z, minZoomAllowed, maxZoomAllowed) * scrollSpeed) * Input.mouseScrollDelta.y);
 
-        /* newZoom.x = Mathf.Clamp(zoomCalcValue.x, minZoomAllowed, maxZoomAllowed);
-        newZoom.y = Mathf.Clamp(zoomCalcValue.y, minZoomAllowed, maxZoomAllowed);
-        newZoom.z = Mathf.Clamp(zoomCalcValue.z, minZoomAllowed, maxZoomAllowed); */
+        if (Input.mouseScrollDelta.y > 0)
+        {
+                ZoomIn(cameraObject, scrollSpeed, minZoomAllowed);
+        }
+
+        if (Input.mouseScrollDelta.y < 0)
+        {
+                ZoomOut(cameraObject, scrollSpeed, maxZoomAllowed);
+        }
 
         transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, (Time.deltaTime * cameraTime));
-        cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, newZoom, (Time.deltaTime * cameraTime));
     }
 }

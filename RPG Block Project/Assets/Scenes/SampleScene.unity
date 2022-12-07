@@ -337,7 +337,8 @@ PrefabInstance:
       propertyPath: m_AngularSpeed
       value: 300
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2261617378255090362, guid: 6e01548f47b1ebc44aeb6e5c7fbb916b, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 6e01548f47b1ebc44aeb6e5c7fbb916b, type: 3}
 --- !u!1001 &227324248
 PrefabInstance:
@@ -424,6 +425,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3751583959428356930, guid: 80e5ab518704648408eddb5f42a91b7a, type: 3}
+      propertyPath: cameraObject
+      value: 
+      objectReference: {fileID: 2022063045}
+    - target: {fileID: 3751583959428356930, guid: 80e5ab518704648408eddb5f42a91b7a, type: 3}
       propertyPath: zoomAmount.y
       value: -1
       objectReference: {fileID: 0}
@@ -436,16 +441,20 @@ PrefabInstance:
       value: -5
       objectReference: {fileID: 0}
     - target: {fileID: 3751583959428356930, guid: 80e5ab518704648408eddb5f42a91b7a, type: 3}
-      propertyPath: maxZoomAllowed
+      propertyPath: initZoomLength
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 3751583959428356930, guid: 80e5ab518704648408eddb5f42a91b7a, type: 3}
+      propertyPath: maxZoomAllowed
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3751583959428356930, guid: 80e5ab518704648408eddb5f42a91b7a, type: 3}
       propertyPath: minZoomAllowed
-      value: -10
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3751583959428356930, guid: 80e5ab518704648408eddb5f42a91b7a, type: 3}
       propertyPath: rotationAmount
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3751583959428356930, guid: 80e5ab518704648408eddb5f42a91b7a, type: 3}
       propertyPath: targetTransform
