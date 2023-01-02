@@ -333,6 +333,14 @@ PrefabInstance:
       propertyPath: camPrefabObject
       value: 
       objectReference: {fileID: 1611706111}
+    - target: {fileID: 6099382398835872853, guid: 6e01548f47b1ebc44aeb6e5c7fbb916b, type: 3}
+      propertyPath: combatlayerMask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 6099382398835872853, guid: 6e01548f47b1ebc44aeb6e5c7fbb916b, type: 3}
+      propertyPath: navigationlayerMask.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 8841568082402002164, guid: 6e01548f47b1ebc44aeb6e5c7fbb916b, type: 3}
       propertyPath: m_Speed
       value: 10
@@ -978,7 +986,45 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 5791645727049016083, guid: ca45587d8e2730a45ba5affdf99f4dfa, type: 3}
+      propertyPath: m_Carve
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5791645727049016083, guid: ca45587d8e2730a45ba5affdf99f4dfa, type: 3}
+      propertyPath: m_Shape
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5791645727049016083, guid: ca45587d8e2730a45ba5affdf99f4dfa, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5791645727049016083, guid: ca45587d8e2730a45ba5affdf99f4dfa, type: 3}
+      propertyPath: m_Center.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5791645727049016083, guid: ca45587d8e2730a45ba5affdf99f4dfa, type: 3}
+      propertyPath: m_Extents.x
+      value: 0.625
+      objectReference: {fileID: 0}
+    - target: {fileID: 5791645727049016083, guid: ca45587d8e2730a45ba5affdf99f4dfa, type: 3}
+      propertyPath: m_Extents.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5791645727049016083, guid: ca45587d8e2730a45ba5affdf99f4dfa, type: 3}
+      propertyPath: m_Extents.z
+      value: 0.625
+      objectReference: {fileID: 0}
+    - target: {fileID: 7728814263731200834, guid: ca45587d8e2730a45ba5affdf99f4dfa, type: 3}
+      propertyPath: m_Height
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7728814263731200834, guid: ca45587d8e2730a45ba5affdf99f4dfa, type: 3}
+      propertyPath: m_Radius
+      value: 0.75
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 7728814263731200834, guid: ca45587d8e2730a45ba5affdf99f4dfa, type: 3}
+    - {fileID: 5791645727049016083, guid: ca45587d8e2730a45ba5affdf99f4dfa, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: ca45587d8e2730a45ba5affdf99f4dfa, type: 3}
 --- !u!4 &932378282 stripped
 Transform:
@@ -1166,6 +1212,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 278326253939983929, guid: cd777763c53d03c4494ccda8a66cf744, type: 3}
+      propertyPath: debugCombatLog
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 278326253939983929, guid: cd777763c53d03c4494ccda8a66cf744, type: 3}
+      propertyPath: debugNullValues
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 278326253939983929, guid: cd777763c53d03c4494ccda8a66cf744, type: 3}
+      propertyPath: debugColliderObject
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 278326253939983929, guid: cd777763c53d03c4494ccda8a66cf744, type: 3}
+      propertyPath: debugLayerMaskValues
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7900098853836501265, guid: cd777763c53d03c4494ccda8a66cf744, type: 3}
       propertyPath: m_RootOrder
       value: 6
