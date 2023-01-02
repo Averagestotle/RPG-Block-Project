@@ -45,7 +45,7 @@ namespace Asset.Player.Controller
             
             if(CombatInteration()) return;
             if(MoveToCursor()) return;
-            print("Idle State.");
+            if(IdleState()) return;
         }
         #endregion
 
@@ -65,12 +65,11 @@ namespace Asset.Player.Controller
 
             if (destination != new Vector3() && IsNullCheck.IsGameObjectNotEmpty(playerMove.gameObject, sceneDebugLog.debugNullValues))
             {
-                if (Input.GetMouseButton(0))
+                if (Input.GetMouseButtonDown(0))
                 {
-                    playerMove.StartMovementAction(destination);
+                    playerMove.StartMovementAction(destination, sceneDebugLog);
                 }
-                //playerMove.StartMovementAction(destination);
-                //playerMove.MoveTowardsDestination(destination);
+
                 return true;
             } else
             {
@@ -91,11 +90,11 @@ namespace Asset.Player.Controller
 
                 if (combatTarget != null)
                 {
-                    if (Input.GetMouseButton(0))
+                    if (Input.GetMouseButtonDown(0))
                     {
-                        combatController.AttackCommand(combatTarget, sceneDebugLog.debugCombatLog);
+                        combatController.AttackCommand(combatTarget, sceneDebugLog);
                     }
-                    //combatController.AttackCommand(combatTarget, sceneDebugLog.debugCombatLog);
+
                     return true;
                 } else
                 {
@@ -105,6 +104,18 @@ namespace Asset.Player.Controller
             {
                 return false;
             }       
+        }
+        #endregion
+
+        #region Idle Functions
+        public bool IdleState()
+        {
+            if (sceneDebugLog.debugStateLog)
+            {
+                Debug.Log("Agent is in idle state.");
+            }
+            
+            return true;
         }
         #endregion
     }

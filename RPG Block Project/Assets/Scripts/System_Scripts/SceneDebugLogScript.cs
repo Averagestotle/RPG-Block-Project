@@ -9,6 +9,7 @@ namespace System.DebugLogs
         public bool debugNullValues = false;
         public bool debugLayerMaskValues = false;
         public bool debugColliderObject = false;
+        public bool debugStateLog = false;
         public bool debugCombatLog = false;
         #endregion
     }

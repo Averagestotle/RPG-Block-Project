@@ -1213,8 +1213,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 278326253939983929, guid: cd777763c53d03c4494ccda8a66cf744, type: 3}
+      propertyPath: debugStateLog
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 278326253939983929, guid: cd777763c53d03c4494ccda8a66cf744, type: 3}
       propertyPath: debugCombatLog
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 278326253939983929, guid: cd777763c53d03c4494ccda8a66cf744, type: 3}
       propertyPath: debugNullValues
