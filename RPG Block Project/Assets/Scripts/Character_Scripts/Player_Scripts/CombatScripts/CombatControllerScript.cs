@@ -13,6 +13,7 @@ namespace Asset.Player.Combat
         private IsNullCheckScript IsNullCheck = new IsNullCheckScript();
         private PlayerMoveScript playerMove;
         private ActionSchedulerScript actionScheduler;
+        private Animator animator;
         #endregion
 
         #region Awake
@@ -20,6 +21,7 @@ namespace Asset.Player.Combat
         {
             playerMove = this.GetComponent<PlayerMoveScript>();
             actionScheduler = this.GetComponent<ActionSchedulerScript>();
+            animator = this.GetComponentInChildren<Animator>();
         }
         #endregion
 
@@ -33,11 +35,13 @@ namespace Asset.Player.Combat
                 if (playerMove != null && !inRange)
                 {
                     playerMove.MoveTowardsDestination(targetAgent.position);
-                }
+                }                
                 else
                 {
                     playerMove.Cancel();
                 }
+
+                
             }
         }
         #endregion
@@ -46,6 +50,7 @@ namespace Asset.Player.Combat
         #region Attacks
         public void AttackCommand(CombatTargetScript combatTarget, SceneDebugLogScript debugLogEnabled = null)
         {
+
             if (debugLogEnabled != null && debugLogEnabled.debugCombatLog)
             {
                 print("Player has attacked.");
@@ -57,6 +62,12 @@ namespace Asset.Player.Combat
             }
 
             targetAgent = combatTarget.transform;
+
+            bool inRange = Vector3.Distance(this.transform.position, targetAgent.position) < attackRange;
+            if (playerMove != null && inRange)
+            {
+                animator.SetTrigger("Attack Trigger");
+            }
         }                
 
         public void Cancel()
