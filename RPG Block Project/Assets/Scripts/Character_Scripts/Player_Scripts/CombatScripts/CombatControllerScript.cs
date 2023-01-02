@@ -47,7 +47,7 @@ namespace Asset.Player.Combat
         public void AttackCommand(CombatTargetScript combatTarget, bool DebugCombatLogEnabled = false)
         {
             
-            if (Input.GetMouseButton(0))
+            //if (Input.GetMouseButton(0))
             {
                 if (DebugCombatLogEnabled)
                 {
