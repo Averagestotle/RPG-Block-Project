@@ -9,11 +9,16 @@ namespace Asset.Player.Combat
     {
         #region Properties
         private Transform targetAgent;
-        private float attackRange = 5f;
+        [SerializeField] float attackRange = 4.5f;
+        [SerializeField] float attackDelay = 1.5f;
+        private float timeSinceLastAttack = 0f;
+        public bool canAttack = false;
         private IsNullCheckScript IsNullCheck = new IsNullCheckScript();
         private PlayerMoveScript playerMove;
         private ActionSchedulerScript actionScheduler;
         private Animator animator;
+        
+        public float debugDistanceToTarget;
         #endregion
 
         #region Awake
@@ -28,22 +33,9 @@ namespace Asset.Player.Combat
         #region Update
         private void Update()
         {
-            if (IsNullCheck.IsTransformNotEmpty(targetAgent))
-            {
-                bool inRange = Vector3.Distance(this.transform.position, targetAgent.position) < attackRange;
-                //print("Vector A: " + this.transform.position + " / " + "Vector A: " + targetAgent.position);
-                if (playerMove != null && !inRange)
-                {
-                    playerMove.MoveTowardsDestination(targetAgent.position);
-                }                
-                else
-                {
-                    playerMove.Cancel();
-                }
-
-                
-            }
-        }
+            canAttack = CanAttack(canAttack);
+            targetAgent = IsTargetInRange(targetAgent, canAttack);
+        }        
         #endregion
 
 
@@ -63,19 +55,76 @@ namespace Asset.Player.Combat
 
             targetAgent = combatTarget.transform;
 
-            bool inRange = Vector3.Distance(this.transform.position, targetAgent.position) < attackRange;
-            if (playerMove != null && inRange)
+            IsTargetInRange(targetAgent, canAttack);
+        }
+
+        private Transform IsTargetInRange(Transform targetTransform, bool canAttack)
+        {
+            if (IsNullCheck.IsTransformNotEmpty(targetTransform))
             {
-                animator.SetTrigger("Attack Trigger");
+                bool inRange = Vector3.Distance(this.transform.position, targetTransform.position) < attackRange;
+                debugDistanceToTarget = DebugCalculateDistance(this.transform, targetTransform);
+                if (playerMove != null && !inRange)
+                {
+                    playerMove.MoveTowardsDestination(targetTransform.position);
+                }
+                else
+                {
+                    playerMove.Cancel();                    
+                    targetTransform = null;
+                    debugDistanceToTarget = 0;   
+                }
+
+                if (playerMove != null && inRange && canAttack)
+                {
+                    RunAttackAnimation();
+                    timeSinceLastAttack = 0f;
+                }
             }
-        }                
+            return targetTransform;
+        }
+        
+        private bool CanAttack(bool canAttack)
+        {
+
+            timeSinceLastAttack += Time.deltaTime;
+
+            if(timeSinceLastAttack >= attackDelay)
+            {
+                canAttack = true;                
+            } else
+            {
+                canAttack = false;
+            }
+
+            return canAttack;
+        }
 
         public void Cancel()
         {
             targetAgent = null;
         }
         #endregion
+
+        #region DebugFunctions
+        private float DebugCalculateDistance(Transform transformA, Transform transformB)
+        {
+            float distance = 0;
+            return distance = Vector3.Distance(transformA.position, transformB.position);          
+        }
+        #endregion
+
+        #region Animation Functions
+        public void Hit()
+        {
+            print("Test!");
+        }
+
+        private void RunAttackAnimation()
+        {
+            animator.SetTrigger("Attack Trigger");
+            //Hit is also called when running additional code.
+        }
+        #endregion
     }
 }
-
-
