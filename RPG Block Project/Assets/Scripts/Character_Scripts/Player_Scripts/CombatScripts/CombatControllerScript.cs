@@ -67,19 +67,24 @@ namespace Asset.Player.Combat
                 if (playerMove != null && !inRange)
                 {
                     playerMove.MoveTowardsDestination(targetTransform.position);
+                } 
+                else if (playerMove != null && inRange && canAttack)
+                {
+                    
+                    RunAttackAnimation();
+                    timeSinceLastAttack = 0f;
+                    playerMove.Cancel();
+                    //targetTransform = null;
+                    debugDistanceToTarget = 0;
                 }
                 else
                 {
                     playerMove.Cancel();                    
-                    targetTransform = null;
+                    //targetTransform = null;
                     debugDistanceToTarget = 0;   
                 }
 
-                if (playerMove != null && inRange && canAttack)
-                {
-                    RunAttackAnimation();
-                    timeSinceLastAttack = 0f;
-                }
+                
             }
             return targetTransform;
         }
@@ -117,12 +122,19 @@ namespace Asset.Player.Combat
         #region Animation Functions
         public void Hit()
         {
-            print("Test!");
+            if (targetAgent == null) return;
+            print("Hit!");
+            CombatHealthScript combatHealth = targetAgent.GetComponentInParent<CombatHealthScript>();
+            if (combatHealth != null)
+            {
+                combatHealth.SubractAgentsHealth(10f);
+            }
         }
 
         private void RunAttackAnimation()
         {
             animator.SetTrigger("Attack Trigger");
+            
             //Hit is also called when running additional code.
         }
         #endregion
