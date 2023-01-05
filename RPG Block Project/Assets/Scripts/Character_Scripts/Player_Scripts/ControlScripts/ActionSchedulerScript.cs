@@ -15,16 +15,28 @@ namespace Asset.Player.Controller
 
             if (currentAction != null) 
             {
-                currentAction.Cancel();
+                currentAction.SwitchAction();
 
                 if ((debugLogEnabled != null && debugLogEnabled.debugStateLog))
                 {
                     Debug.Log("Canceling previous action: " + currentAction);
-                }
-                
+                }                
             };
             
             currentAction = action;
+        }
+
+        public void CancelAction(IActionScript action, SceneDebugLogScript debugLogEnabled = null)
+        {
+            if (currentAction == null) return;
+
+            if (currentAction != null)
+            {
+                if ((debugLogEnabled != null && debugLogEnabled.debugStateLog))
+                {
+                    Debug.Log("Canceling previous action: " + currentAction);
+                }
+            }
         }
     }
 

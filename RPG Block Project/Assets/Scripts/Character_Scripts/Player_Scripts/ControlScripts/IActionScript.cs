@@ -6,7 +6,7 @@ namespace Asset.Player.Controller
 {
     public interface IActionScript
     {
-        public void Cancel();
+        public void SwitchAction();
     }
 }
     

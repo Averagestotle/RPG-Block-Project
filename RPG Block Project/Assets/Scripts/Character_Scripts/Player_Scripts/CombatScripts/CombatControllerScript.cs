@@ -9,9 +9,10 @@ namespace Asset.Player.Combat
     {
         #region Properties
         private Transform targetAgent;
+        [SerializeField] float attackDamage = 10f;
         [SerializeField] float attackRange = 4.5f;
         [SerializeField] float attackDelay = 1.5f;
-        private float timeSinceLastAttack = 0f;
+        public float timeSinceLastAttack = 0f;
         public bool canAttack = false;
         private IsNullCheckScript IsNullCheck = new IsNullCheckScript();
         private PlayerMoveScript playerMove;
@@ -34,7 +35,7 @@ namespace Asset.Player.Combat
         private void Update()
         {
             canAttack = CanAttack(canAttack);
-            targetAgent = IsTargetInRange(targetAgent, canAttack);
+            IsTargetInRange(targetAgent, canAttack);
         }        
         #endregion
 
@@ -54,11 +55,10 @@ namespace Asset.Player.Combat
             }
 
             targetAgent = combatTarget.transform;
-
             IsTargetInRange(targetAgent, canAttack);
         }
 
-        private Transform IsTargetInRange(Transform targetTransform, bool canAttack)
+        private void IsTargetInRange(Transform targetTransform, bool canAttack)
         {
             if (IsNullCheck.IsTransformNotEmpty(targetTransform))
             {
@@ -67,31 +67,22 @@ namespace Asset.Player.Combat
                 if (playerMove != null && !inRange)
                 {
                     playerMove.MoveTowardsDestination(targetTransform.position);
-                } 
+                }
                 else if (playerMove != null && inRange && canAttack)
                 {
-                    
                     RunAttackAnimation();
-                    timeSinceLastAttack = 0f;
-                    playerMove.Cancel();
-                    //targetTransform = null;
-                    debugDistanceToTarget = 0;
+                    playerMove.SwitchAction();
+                    ResetAttack();
                 }
                 else
                 {
-                    playerMove.Cancel();                    
-                    //targetTransform = null;
-                    debugDistanceToTarget = 0;   
-                }
-
-                
+                    playerMove.SwitchAction();
+                }            
             }
-            return targetTransform;
         }
         
         private bool CanAttack(bool canAttack)
         {
-
             timeSinceLastAttack += Time.deltaTime;
 
             if(timeSinceLastAttack >= attackDelay)
@@ -105,17 +96,18 @@ namespace Asset.Player.Combat
             return canAttack;
         }
 
-        public void Cancel()
-        {
-            targetAgent = null;
-        }
+        private void ResetAttack()
+        {           
+            timeSinceLastAttack = 0;
+            canAttack = false;
+        }        
         #endregion
 
         #region DebugFunctions
         private float DebugCalculateDistance(Transform transformA, Transform transformB)
         {
             float distance = 0;
-            return distance = Vector3.Distance(transformA.position, transformB.position);          
+            return distance = Mathf.Max(Vector3.Distance(transformA.position, transformB.position), 0);          
         }
         #endregion
 
@@ -127,7 +119,9 @@ namespace Asset.Player.Combat
             CombatHealthScript combatHealth = targetAgent.GetComponentInParent<CombatHealthScript>();
             if (combatHealth != null)
             {
-                combatHealth.SubractAgentsHealth(10f);
+                combatHealth.SubractAgentsHealth(attackDamage);
+                SwitchAction();
+
             }
         }
 
@@ -136,6 +130,13 @@ namespace Asset.Player.Combat
             animator.SetTrigger("Attack Trigger");
             
             //Hit is also called when running additional code.
+        }
+        #endregion
+
+        #region Action
+        public void SwitchAction()
+        {
+            targetAgent = null;
         }
         #endregion
     }

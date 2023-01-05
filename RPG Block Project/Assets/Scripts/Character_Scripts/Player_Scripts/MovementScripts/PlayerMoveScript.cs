@@ -71,7 +71,7 @@ namespace Asset.Player.Movement
         #endregion
 
         #region IAction Interface
-        public void Cancel() 
+        public void SwitchAction() 
         {
             if (playerNavAgent != null)
             {
