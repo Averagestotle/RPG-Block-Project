@@ -97,6 +97,20 @@ namespace Asset.Player.Combat
             return canAttack;
         }
 
+        private bool IsCharacterDead()
+        {
+            if (targetAgent == null) return false;
+
+            CombatHealthScript combatHealth = targetAgent.GetComponentInParent<CombatHealthScript>();
+
+            if (combatHealth != null && combatHealth.isDeadAlready)
+            {
+                return true;
+            }
+
+                return false;
+        }
+
         private void ResetAttack()
         {           
             timeSinceLastAttack = 0;
@@ -115,22 +129,21 @@ namespace Asset.Player.Combat
         #region Animation Functions
         public void Hit()
         {
-            if (targetAgent == null) return;
-            print("Hit!");
-            CombatHealthScript combatHealth = targetAgent.GetComponentInParent<CombatHealthScript>();
-            if (combatHealth != null)
+            if (!IsCharacterDead())
             {
-                combatHealth.SubractAgentsHealth(attackDamage);
+                print("Hit!");
+                targetAgent.GetComponentInParent<CombatHealthScript>().SubractAgentsHealth(attackDamage);
                 SwitchAction();
-
-            }
+            }         
         }
 
         private void RunAttackAnimation(Transform targetTransform)
         {
-            this.transform.LookAt(targetTransform.position); //Look at the target's position
-            animator.SetTrigger("Attack Trigger");
-            
+            if(!IsCharacterDead())
+            {
+                this.transform.LookAt(targetTransform.position); //Look at the target's position
+                animator.SetTrigger("Attack Trigger");
+            }
             //Hit is also called when running additional code.
         }
         #endregion
