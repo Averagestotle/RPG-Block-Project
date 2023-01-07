@@ -17,7 +17,7 @@ namespace Asset.Player.Controller
         public LayerMask navigationLayerMask;
         public LayerMask combatLayerMask;
 
-        private PlayerMoveScript playerMove = new PlayerMoveScript();
+        private CharacterMoveScript characterMove = new CharacterMoveScript();
         private CameraBehavior cameraController = new CameraBehavior();
         private IsNullCheckScript IsNullCheck = new IsNullCheckScript();
         private CombatControllerScript combatController= new CombatControllerScript();
@@ -29,7 +29,7 @@ namespace Asset.Player.Controller
         // Start is called before the first frame update
         void Start()
         {
-            playerMove = GetComponent<PlayerMoveScript>();
+            characterMove = this.GetComponent<CharacterMoveScript>();
             cameraController = camPrefabObject.GetComponentInChildren<CameraBehavior>();
             combatController = this.GetComponent<CombatControllerScript>();
             camera = camPrefabObject.GetComponentInChildren<Camera>();
@@ -63,11 +63,11 @@ namespace Asset.Player.Controller
 
             destination = raycastLayermaskByCamera.FindByLayermaskCheck(camera, navigationLayerMask, sceneDebugLog);
 
-            if (destination != new Vector3() && IsNullCheck.IsGameObjectNotEmpty(playerMove.gameObject, sceneDebugLog.debugNullValues))
+            if (destination != new Vector3() && IsNullCheck.IsGameObjectNotEmpty(characterMove.gameObject, sceneDebugLog.debugNullValues))
             {
                 if (Input.GetMouseButtonDown(0))
                 {
-                    playerMove.StartMovementAction(destination, sceneDebugLog);
+                    characterMove.StartMovementAction(destination, sceneDebugLog);
                 }
 
                 return true;

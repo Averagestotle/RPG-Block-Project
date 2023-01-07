@@ -1,4 +1,3 @@
-//using Asset.Player.Combat;
 using Asset.Player.Controller;
 using System.DebugLogs;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -7,15 +6,13 @@ using UnityEngine.AI;
 
 namespace Asset.Player.Movement
 {
-    public class PlayerMoveScript : MonoBehaviour, IActionScript
+    public class CharacterMoveScript : MonoBehaviour, IActionScript
     {
         #region Properties
-        private GameObject player;
-        private NavMeshAgent playerNavAgent;
-        //private CombatControllerScript combatController;
+        private GameObject character;
+        private NavMeshAgent characterNavAgent;
         private ActionSchedulerScript actionScheduler;
         private IsNullCheckScript IsNullCheck = new IsNullCheckScript();
-        //private IActionScript actionScript;
         public bool isStopped;
         #endregion
 
@@ -23,13 +20,11 @@ namespace Asset.Player.Movement
         // Start is called before the first frame update
         void Start()
             {
-                player = this.gameObject;
-                if (IsNullCheck.IsGameObjectNotEmpty(player))
+                character = this.gameObject;
+                if (IsNullCheck.IsGameObjectNotEmpty(character))
                 {
-                    playerNavAgent = player.GetComponent<NavMeshAgent>();
-                    //combatController = player.GetComponent<CombatControllerScript>();
+                    characterNavAgent = character.GetComponent<NavMeshAgent>();
                     actionScheduler = this.GetComponent<ActionSchedulerScript>();
-                    //actionScript = (IActionScript)actionScheduler;
                 }
             }
         #endregion
@@ -43,17 +38,16 @@ namespace Asset.Player.Movement
             {
                 actionScheduler.StartAction(this, sceneDebugLog);
             }
-            //combatController.CancelTarget();
             MoveTowardsDestination(pos);
         }
 
         public void MoveTowardsDestination(Vector3 pos)
         {
-            if (playerNavAgent != null)
+            if (characterNavAgent != null)
             {
-                playerNavAgent.destination = pos;
-                playerNavAgent.isStopped = false;
-                isStopped = playerNavAgent.isStopped;                 
+                characterNavAgent.destination = pos;
+                characterNavAgent.isStopped = false;
+                isStopped = characterNavAgent.isStopped;                 
             } else
             {
                 print("Agent cannot move: No navMesh assigned.");
@@ -62,10 +56,10 @@ namespace Asset.Player.Movement
 
         public void MovementStopped()
         {
-            if (playerNavAgent != null)
+            if (characterNavAgent != null)
             {
-                playerNavAgent.isStopped = true;
-                isStopped = playerNavAgent.isStopped;
+                characterNavAgent.isStopped = true;
+                isStopped = characterNavAgent.isStopped;
             }
         }
         #endregion
@@ -73,10 +67,10 @@ namespace Asset.Player.Movement
         #region IAction Interface
         public void SwitchAction() 
         {
-            if (playerNavAgent != null)
+            if (characterNavAgent != null)
             {
-                playerNavAgent.isStopped = true;
-                isStopped = playerNavAgent.isStopped;
+                characterNavAgent.isStopped = true;
+                isStopped = characterNavAgent.isStopped;
             }
         }
         #endregion

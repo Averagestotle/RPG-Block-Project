@@ -15,7 +15,7 @@ namespace Asset.Player.Combat
         public float timeSinceLastAttack = 0f;
         public bool canAttack = false;
         private IsNullCheckScript IsNullCheck = new IsNullCheckScript();
-        private PlayerMoveScript playerMove;
+        private CharacterMoveScript playerMove;
         private ActionSchedulerScript actionScheduler;
         private Animator animator;
         
@@ -25,7 +25,7 @@ namespace Asset.Player.Combat
         #region Awake
         private void Awake()
         {
-            playerMove = this.GetComponent<PlayerMoveScript>();
+            playerMove = this.GetComponent<CharacterMoveScript>();
             actionScheduler = this.GetComponent<ActionSchedulerScript>();
             animator = this.GetComponentInChildren<Animator>();
         }

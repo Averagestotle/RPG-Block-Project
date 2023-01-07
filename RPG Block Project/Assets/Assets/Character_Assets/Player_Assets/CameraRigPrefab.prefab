@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8772984476748062686}
   - component: {fileID: 3751583959428356930}
   m_Layer: 0
-  m_Name: CameraRig
+  m_Name: CameraRigPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,14 +47,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraTransform: {fileID: 594684184672238304}
-  cameraSpeed: 2
+  cameraObject: {fileID: 7156942840728129264}
+  targetTransform: {fileID: 0}
   cameraTime: 1
-  normalSpeed: 2
-  rotationAmount: 5
+  rotationAmount: 2
   scrollSpeed: 1
-  newPosition: {x: 0, y: 0, z: 0}
-  zoomAmount: {x: 0, y: 0, z: 0}
-  newZoom: {x: 0, y: 0, z: 0}
+  minZoomAllowed: 5
+  maxZoomAllowed: 20
+  initZoomLength: 10
+  currentZoomLevel: 0
   newRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &4705656423057938976
 GameObject:

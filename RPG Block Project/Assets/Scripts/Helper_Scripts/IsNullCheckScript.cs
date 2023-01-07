@@ -15,7 +15,7 @@ public class IsNullCheckScript : MonoBehaviour
         {
             if (DebugErrorLogEnabled)
             {
-                Debug.LogError("A null object was passed.");
+                Debug.Log("A null object was passed.");
             }
             return false;
         }
@@ -31,7 +31,7 @@ public class IsNullCheckScript : MonoBehaviour
         {
             if (DebugErrorLogEnabled)
             {
-                Debug.LogError("A null transform was passed.");
+                Debug.Log("A null transform was passed.");
             }
             return false;
         }

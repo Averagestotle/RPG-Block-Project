@@ -6,7 +6,7 @@ using UnityEngine;
 public class RaycastLayermaskByCamera : MonoBehaviour
 {
     #region Properties
-        private IsNullCheckScript IsNullCheck = new IsNullCheckScript();
+    private IsNullCheckScript IsNullCheck = new IsNullCheckScript();
     #endregion
 
     public Vector3 FindByLayermaskCheck(Camera cam, LayerMask layerMask, SceneDebugLogScript DebugEnabled = null)
