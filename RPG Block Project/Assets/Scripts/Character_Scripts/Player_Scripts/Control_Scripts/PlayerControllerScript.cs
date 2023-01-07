@@ -18,6 +18,7 @@ namespace Asset.Player.Controller
         public LayerMask combatLayerMask;
 
         private CharacterMoveScript characterMove = new CharacterMoveScript();
+        private CombatTargetScript characterCombatTarget = new CombatTargetScript();
         private CameraBehavior cameraController = new CameraBehavior();
         private IsNullCheckScript IsNullCheck = new IsNullCheckScript();
         private CombatControllerScript combatController= new CombatControllerScript();
@@ -30,6 +31,7 @@ namespace Asset.Player.Controller
         void Start()
         {
             characterMove = this.GetComponent<CharacterMoveScript>();
+            characterCombatTarget = this.GetComponentInParent<CombatTargetScript>();
             cameraController = camPrefabObject.GetComponentInChildren<CameraBehavior>();
             combatController = this.GetComponent<CombatControllerScript>();
             camera = camPrefabObject.GetComponentInChildren<Camera>();
@@ -88,10 +90,12 @@ namespace Asset.Player.Controller
             {
                 CombatTargetScript combatTarget = agent.GetComponentInParent<CombatTargetScript>();
 
-                if (combatTarget != null)
+                if (combatTarget != null && combatTarget != characterCombatTarget)
                 {
                     if (Input.GetMouseButtonDown(0))
                     {
+                        //if (combatTarget == this.GetComponentInParent<CombatTargetScript>()) return false;
+
                         combatController.AttackCommand(combatTarget, sceneDebugLog);
                     }
 

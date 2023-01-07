@@ -70,12 +70,13 @@ namespace Asset.Player.Combat
                 }
                 else if (playerMove != null && inRange && canAttack)
                 {
-                    RunAttackAnimation();
+                    RunAttackAnimation(targetTransform);
                     playerMove.SwitchAction();
                     ResetAttack();
                 }
                 else
                 {
+                    debugDistanceToTarget = 0;
                     playerMove.SwitchAction();
                 }            
             }
@@ -125,8 +126,9 @@ namespace Asset.Player.Combat
             }
         }
 
-        private void RunAttackAnimation()
+        private void RunAttackAnimation(Transform targetTransform)
         {
+            this.transform.LookAt(targetTransform.position); //Look at the target's position
             animator.SetTrigger("Attack Trigger");
             
             //Hit is also called when running additional code.
