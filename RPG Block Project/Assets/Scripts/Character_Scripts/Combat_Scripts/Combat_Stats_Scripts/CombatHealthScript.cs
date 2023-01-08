@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Asset.Player.Combat
 {
@@ -9,7 +10,7 @@ namespace Asset.Player.Combat
         #region Properties
         [SerializeField] public float combatHealth = 100f;
         private Animator animator;
-        public bool isDeadAlready = false;
+        private bool isDeadAlready = false;
         #endregion
 
         #region Awake
@@ -42,7 +43,14 @@ namespace Asset.Player.Combat
         #region Death Functions
         private void CharacterDeath()
         {
-                animator.SetTrigger("Is Dead");
+            animator.SetTrigger("Is Dead");
+            this.GetComponentInChildren<BoxCollider>().enabled = false;
+            this.GetComponentInChildren<NavMeshAgent>().enabled= false;
+        }
+
+        public bool CheckIfDead() 
+        {
+            return isDeadAlready;
         }
         #endregion
     }

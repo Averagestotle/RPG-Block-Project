@@ -11,6 +11,7 @@ namespace System.DebugLogs
         public bool debugColliderObject = false;
         public bool debugStateLog = false;
         public bool debugCombatLog = false;
+        public bool debugCharacterMovementLog = false;
         #endregion
     }
 

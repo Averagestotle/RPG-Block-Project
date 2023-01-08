@@ -97,13 +97,13 @@ namespace Asset.Player.Combat
             return canAttack;
         }
 
-        private bool IsCharacterDead()
+        public bool IsCharacterDead()
         {
             if (targetAgent == null) return false;
 
             CombatHealthScript combatHealth = targetAgent.GetComponentInParent<CombatHealthScript>();
 
-            if (combatHealth != null && combatHealth.isDeadAlready)
+            if (combatHealth != null && combatHealth.CheckIfDead())
             {
                 return true;
             }
@@ -131,7 +131,8 @@ namespace Asset.Player.Combat
         {
             if (!IsCharacterDead())
             {
-                print("Hit!");
+                if (targetAgent == null) return;
+                print("Hit!");                
                 targetAgent.GetComponentInParent<CombatHealthScript>().SubractAgentsHealth(attackDamage);
                 SwitchAction();
             }         

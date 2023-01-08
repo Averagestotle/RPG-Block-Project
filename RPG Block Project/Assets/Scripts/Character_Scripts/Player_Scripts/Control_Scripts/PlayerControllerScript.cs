@@ -44,7 +44,8 @@ namespace Asset.Player.Controller
         void Update()
         {
             cameraController.HandleRotateScollInput();
-            
+
+            if(combatController.IsCharacterDead()) { return; }
             if(CombatInteration()) return;
             if(MoveToCursor()) return;
             if(IdleState()) return;
