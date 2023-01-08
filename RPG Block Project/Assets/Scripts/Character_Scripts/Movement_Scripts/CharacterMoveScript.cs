@@ -13,9 +13,11 @@ namespace Asset.Player.Movement
         private NavMeshAgent characterNavAgent;
         private ActionSchedulerScript actionScheduler;
         private IsNullCheckScript IsNullCheck = new IsNullCheckScript();
+        public float movementSpeed;
         public bool isStopped;
         public float chaseRange;
         public float targetDistance;
+        
         #endregion
 
         #region Start
@@ -48,6 +50,7 @@ namespace Asset.Player.Movement
             if (characterNavAgent != null && characterNavAgent.enabled)
             {
                 characterNavAgent.destination = pos;
+                characterNavAgent.speed = movementSpeed;
                 characterNavAgent.isStopped = false;
                 isStopped = characterNavAgent.isStopped;                 
             } else
@@ -114,7 +117,7 @@ namespace Asset.Player.Movement
         #region IAction Interface
         public void SwitchAction() 
         {
-            if (characterNavAgent != null)
+            if (characterNavAgent != null && characterNavAgent.enabled)
             {
                 characterNavAgent.isStopped = true;
                 isStopped = characterNavAgent.isStopped;

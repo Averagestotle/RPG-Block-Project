@@ -8,6 +8,10 @@ namespace Asset.Player.Controller
     using Asset.Player.Movement;
     using System.DebugLogs;
 
+    [RequireComponent(typeof(CombatControllerScript))]
+    [RequireComponent(typeof(CombatTargetScript))]
+    [RequireComponent(typeof(CombatHealthScript))]
+    [RequireComponent(typeof(CharacterMoveScript))]
     public class CharacterControllerScript : MonoBehaviour
     {
         #region Properties
@@ -16,6 +20,8 @@ namespace Asset.Player.Controller
 
         private CharacterMoveScript characterMove = new CharacterMoveScript();
         private CombatControllerScript combatController = new CombatControllerScript();
+        private CombatHealthScript combatHealth = new CombatHealthScript();
+        private CombatTargetScript characterCombatTarget = new CombatTargetScript();
         private IsNullCheckScript IsNullCheck = new IsNullCheckScript();
         private RaycastAgentByComponent raycastAgent = new RaycastAgentByComponent();
         private SceneDebugLogScript sceneDebugLog = new SceneDebugLogScript();
@@ -28,6 +34,8 @@ namespace Asset.Player.Controller
         {
             characterMove = this.GetComponent<CharacterMoveScript>();
             combatController = this.GetComponent<CombatControllerScript>();
+            combatHealth = this.GetComponent<CombatHealthScript>();
+            characterCombatTarget = this.GetComponentInParent<CombatTargetScript>();
             sceneDebugLog = FindObjectOfType<SceneDebugLogScript>();
             targetAgent = GameObject.FindGameObjectWithTag("Player");
         }
@@ -36,8 +44,9 @@ namespace Asset.Player.Controller
         #region Update
         private void Update()
         {
-            if (combatController.IsCharacterDead()) { return; }
+            if (combatHealth.CheckIfDead()) { return; }
             if (MoveToAgent()) { return; }
+            if (CombatInteration()) { return; }
         }
         #endregion
 
@@ -61,7 +70,7 @@ namespace Asset.Player.Controller
 
             destination = targetAgent.transform.position;
             inRange = characterMove.IsAgentInRange(origin, destination, sceneDebugLog);
-            tooClose = characterMove.IsAgentTooClose(origin, destination, 4f, sceneDebugLog);
+            tooClose = characterMove.IsAgentTooClose(origin, destination, combatController.GetAttackRange(), sceneDebugLog);
 
             if (destination != new Vector3() && inRange && !tooClose)
             {
@@ -77,6 +86,35 @@ namespace Asset.Player.Controller
         #endregion
 
         #region Combat Functions
+        public bool CombatInteration()
+        {
+            Vector3 destination = new Vector3();
+            Vector3 origin = this.gameObject.transform.position;
+            bool inRange = false;
+
+            if (IsNullCheck.IsGameObjectNotEmpty(targetAgent, sceneDebugLog.debugNullValues))
+            {
+                destination = targetAgent.transform.position;
+                inRange = characterMove.IsAgentInRange(origin, destination, sceneDebugLog);
+                
+                CombatTargetScript combatTarget = targetAgent.GetComponentInParent<CombatTargetScript>();
+
+                if (combatTarget != null && combatTarget != characterCombatTarget && inRange)
+                {
+                    combatController.AttackCommand(combatTarget, this.gameObject, sceneDebugLog);
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
         #endregion
 
         #region Idle Functions

@@ -9,6 +9,10 @@ namespace Asset.Player.Controller
     using Asset.Player.Movement;
     using System.DebugLogs;
 
+    [RequireComponent(typeof(CombatControllerScript))]
+    [RequireComponent(typeof(CombatHealthScript))]
+    [RequireComponent(typeof(CombatTargetScript))]
+    [RequireComponent(typeof(CharacterMoveScript))]
     public class PlayerControllerScript : MonoBehaviour
     {
         #region Properties
@@ -19,6 +23,7 @@ namespace Asset.Player.Controller
 
         private CharacterMoveScript characterMove = new CharacterMoveScript();
         private CombatTargetScript characterCombatTarget = new CombatTargetScript();
+        private CombatHealthScript combatHealth = new CombatHealthScript();
         private CameraBehavior cameraController = new CameraBehavior();
         private IsNullCheckScript IsNullCheck = new IsNullCheckScript();
         private CombatControllerScript combatController= new CombatControllerScript();
@@ -34,6 +39,7 @@ namespace Asset.Player.Controller
             characterCombatTarget = this.GetComponentInParent<CombatTargetScript>();
             cameraController = camPrefabObject.GetComponentInChildren<CameraBehavior>();
             combatController = this.GetComponent<CombatControllerScript>();
+            combatHealth = this.GetComponent<CombatHealthScript>();
             camera = camPrefabObject.GetComponentInChildren<Camera>();
             sceneDebugLog = FindObjectOfType<SceneDebugLogScript>();
         }
@@ -45,8 +51,8 @@ namespace Asset.Player.Controller
         {
             cameraController.HandleRotateScollInput();
 
-            if(combatController.IsCharacterDead()) { return; }
-            if(CombatInteration()) return;
+            if (combatHealth.CheckIfDead()) { return; }
+            if (CombatInteration()) return;
             if(MoveToCursor()) return;
             if(IdleState()) return;
         }
@@ -97,7 +103,7 @@ namespace Asset.Player.Controller
                     {
                         //if (combatTarget == this.GetComponentInParent<CombatTargetScript>()) return false;
 
-                        combatController.AttackCommand(combatTarget, sceneDebugLog);
+                        combatController.AttackCommand(combatTarget, this.gameObject, sceneDebugLog);
                     }
 
                     return true;

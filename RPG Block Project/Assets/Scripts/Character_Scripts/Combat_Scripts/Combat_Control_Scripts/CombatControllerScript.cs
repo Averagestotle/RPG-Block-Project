@@ -17,6 +17,7 @@ namespace Asset.Player.Combat
         private IsNullCheckScript IsNullCheck = new IsNullCheckScript();
         private CharacterMoveScript playerMove;
         private ActionSchedulerScript actionScheduler;
+        private CombatHealthScript combatHealth = new CombatHealthScript();
         private Animator animator;
         
         public float debugDistanceToTarget;
@@ -26,6 +27,7 @@ namespace Asset.Player.Combat
         private void Awake()
         {
             playerMove = this.GetComponent<CharacterMoveScript>();
+            combatHealth = this.GetComponent<CombatHealthScript>();
             actionScheduler = this.GetComponent<ActionSchedulerScript>();
             animator = this.GetComponentInChildren<Animator>();
         }
@@ -34,6 +36,7 @@ namespace Asset.Player.Combat
         #region Update
         private void Update()
         {
+            if (combatHealth.CheckIfDead()) { return; }
             canAttack = CanAttack(canAttack);
             IsTargetInRange(targetAgent, canAttack);
         }        
@@ -41,12 +44,13 @@ namespace Asset.Player.Combat
 
 
         #region Attacks
-        public void AttackCommand(CombatTargetScript combatTarget, SceneDebugLogScript debugLogEnabled = null)
+        public void AttackCommand(CombatTargetScript combatTarget, GameObject debugGameObject = null, SceneDebugLogScript debugLogEnabled = null)
         {
+            //if(targetAgent == null || IsCharacterDead()) { return; }
 
-            if (debugLogEnabled != null && debugLogEnabled.debugCombatLog)
+            if (debugLogEnabled != null && debugLogEnabled.debugCombatLog && debugGameObject != null)
             {
-                print("Player has attacked.");
+                Debug.Log(debugGameObject.gameObject.name + " : Has attacked.");
             }
 
             if(actionScheduler != null)
@@ -56,6 +60,36 @@ namespace Asset.Player.Combat
 
             targetAgent = combatTarget.transform;
             IsTargetInRange(targetAgent, canAttack);
+        }
+    
+        public bool IsTargetCharacterDead()
+        {
+            CombatHealthScript combatHealth = null;
+
+            if (targetAgent != null) 
+            {
+                combatHealth = targetAgent.GetComponentInParent<CombatHealthScript>();
+            }
+
+            if (combatHealth != null && combatHealth.CheckIfDead())
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private void ResetAttack()
+        {           
+            timeSinceLastAttack = 0;
+            canAttack = false;
+        }
+        #endregion
+
+        #region Attack Checks
+        public float GetAttackRange()
+        {
+            return attackRange;
         }
 
         private void IsTargetInRange(Transform targetTransform, bool canAttack)
@@ -68,7 +102,7 @@ namespace Asset.Player.Combat
                 {
                     playerMove.MoveTowardsDestination(targetTransform.position);
                 }
-                else if (playerMove != null && inRange && canAttack)
+                else if (playerMove != null && inRange && canAttack && !IsTargetCharacterDead())
                 {
                     RunAttackAnimation(targetTransform);
                     playerMove.SwitchAction();
@@ -78,44 +112,24 @@ namespace Asset.Player.Combat
                 {
                     debugDistanceToTarget = 0;
                     playerMove.SwitchAction();
-                }            
+                }
             }
         }
-        
         private bool CanAttack(bool canAttack)
         {
             timeSinceLastAttack += Time.deltaTime;
 
-            if(timeSinceLastAttack >= attackDelay)
+            if (timeSinceLastAttack >= attackDelay)
             {
-                canAttack = true;                
-            } else
+                canAttack = true;
+            }
+            else
             {
                 canAttack = false;
             }
 
             return canAttack;
         }
-
-        public bool IsCharacterDead()
-        {
-            if (targetAgent == null) return false;
-
-            CombatHealthScript combatHealth = targetAgent.GetComponentInParent<CombatHealthScript>();
-
-            if (combatHealth != null && combatHealth.CheckIfDead())
-            {
-                return true;
-            }
-
-                return false;
-        }
-
-        private void ResetAttack()
-        {           
-            timeSinceLastAttack = 0;
-            canAttack = false;
-        }        
         #endregion
 
         #region DebugFunctions
@@ -129,7 +143,7 @@ namespace Asset.Player.Combat
         #region Animation Functions
         public void Hit()
         {
-            if (!IsCharacterDead())
+            if (!IsTargetCharacterDead())
             {
                 if (targetAgent == null) return;
                 print("Hit!");                
@@ -140,7 +154,7 @@ namespace Asset.Player.Combat
 
         private void RunAttackAnimation(Transform targetTransform)
         {
-            if(!IsCharacterDead())
+            if(!IsTargetCharacterDead())
             {
                 this.transform.LookAt(targetTransform.position); //Look at the target's position
                 animator.SetTrigger("Attack Trigger");

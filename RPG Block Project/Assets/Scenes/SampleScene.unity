@@ -314,9 +314,25 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2073086898893148195, guid: 10caf9c980f25a74d870e15f2f64692e, type: 3}
+      propertyPath: attackDelay
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2073086898893148195, guid: 10caf9c980f25a74d870e15f2f64692e, type: 3}
+      propertyPath: attackRange
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2073086898893148195, guid: 10caf9c980f25a74d870e15f2f64692e, type: 3}
+      propertyPath: attackDamage
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 2990244782741284907, guid: 10caf9c980f25a74d870e15f2f64692e, type: 3}
       propertyPath: chaseRange
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2990244782741284907, guid: 10caf9c980f25a74d870e15f2f64692e, type: 3}
+      propertyPath: movementSpeed
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3936796159542423209, guid: 10caf9c980f25a74d870e15f2f64692e, type: 3}
       propertyPath: combatHealth
@@ -972,6 +988,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 33671934728280398, guid: b1a89a95d5a55ac4594b705eb0438555, type: 3}
+      propertyPath: movementSpeed
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 3876981586828828998, guid: b1a89a95d5a55ac4594b705eb0438555, type: 3}
       propertyPath: attackDelay
       value: 1.5
