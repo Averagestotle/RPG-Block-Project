@@ -18,7 +18,9 @@ namespace Asset.Player.Controller
         public LayerMask navigationLayerMask;
         public LayerMask combatLayerMask;
         public float chaseRange;
+        public float maxSuspicionTime = Mathf.Infinity;
 
+        private float suspicionTimeCounted = 0F;
         private CharacterMoveScript characterMove = new CharacterMoveScript();
         private CombatControllerScript combatController = new CombatControllerScript();
         private CombatHealthScript combatHealth = new CombatHealthScript();
@@ -99,13 +101,42 @@ namespace Asset.Player.Controller
 
         private bool MoveToGaurdPost()
         {
-            if(characterGuardPosition != new Vector3() &&
-                (targetsKnownPosition != new Vector3() && transform.position == targetsKnownPosition) &&
-                transform.position != characterGuardPosition)
+            // Note: Not really liking these if statements, but here it is:
+            bool inRange = false;
+
+            if (targetsKnownPosition != new Vector3())
             {
+                inRange = characterMove.IsAgentInRange(transform.position, targetsKnownPosition, 1f, sceneDebugLog);
+            }
+
+            // 1) Check to make sure the charcter is at the last known location.
+            // 2) They're not at their guard post.
+            // 3) The suspicion time counted is greater than the max amount of time allowed to wait.
+            // 4) Go to their guard post.
+            if(characterGuardPosition != new Vector3() &&
+                //(targetsKnownPosition != new Vector3() && transform.position == targetsKnownPosition) &&
+                (targetsKnownPosition != new Vector3() && inRange) &&
+                transform.position != characterGuardPosition &&
+                maxSuspicionTime <= suspicionTimeCounted)
+            {
+                // Reset timer and last known location.
+                suspicionTimeCounted = 0;
+                targetsKnownPosition = new Vector3();
+
                 characterMove.StartMovementAction(characterGuardPosition, sceneDebugLog);
                 debugCharactersCurrentDestination = characterGuardPosition;
                 return true;
+            }
+            // 1) Check to make sure the charcter is at the last known location.
+            // 2) The suspicion timer is suspicion time counted is less than the max amount of time to wait.
+            // 3) Increment the suspicion time counter.
+            else if (targetsKnownPosition != new Vector3() &&
+                // transform.position == targetsKnownPosition &&
+                inRange &&
+                maxSuspicionTime > suspicionTimeCounted)
+            {
+                suspicionTimeCounted += Time.deltaTime;
+                return false;
             }
             else
             {
