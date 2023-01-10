@@ -17,6 +17,7 @@ namespace Asset.Player.Controller
         #region Properties
         public LayerMask navigationLayerMask;
         public LayerMask combatLayerMask;
+        public float chaseRange;
 
         private CharacterMoveScript characterMove = new CharacterMoveScript();
         private CombatControllerScript combatController = new CombatControllerScript();
@@ -26,6 +27,11 @@ namespace Asset.Player.Controller
         private RaycastAgentByComponent raycastAgent = new RaycastAgentByComponent();
         private SceneDebugLogScript sceneDebugLog = new SceneDebugLogScript();
         private GameObject targetAgent = null;
+        private Vector3 characterGuardPosition = new Vector3();
+        private Vector3 targetsKnownPosition = new Vector3();
+
+        // Debug Gizmos variables
+        private Vector3 debugCharactersCurrentDestination = new Vector3();
         #endregion
 
         #region Start
@@ -38,15 +44,22 @@ namespace Asset.Player.Controller
             characterCombatTarget = this.GetComponentInParent<CombatTargetScript>();
             sceneDebugLog = FindObjectOfType<SceneDebugLogScript>();
             targetAgent = GameObject.FindGameObjectWithTag("Player");
+            characterGuardPosition = transform.position;
         }
         #endregion
 
         #region Update
         private void Update()
         {
-            if (combatHealth.CheckIfDead()) { return; }
+            if (combatHealth.CheckIfDead()) 
+            {
+                debugCharactersCurrentDestination = new Vector3();
+                return; 
+            }
+
             if (MoveToAgent()) { return; }
             if (CombatInteration()) { return; }
+            if (MoveToGaurdPost()) { return; }
         }
         #endregion
 
@@ -56,32 +69,48 @@ namespace Asset.Player.Controller
         #region Movement Functions
         private bool MoveToAgent()
         {
-            Vector3 destination = new Vector3();
+            Vector3 targetAgentPosition = new Vector3();
             Vector3 origin = this.gameObject.transform.position;
             bool inRange = false;
             bool tooClose = false;
-
-            //targetTransform = raycastAgent.FindPlayerByLayerMaskAndComponent(this.transform.position, combatLayerMask, 10f, sceneDebugLog);
 
             if (!IsNullCheck.IsGameObjectNotEmpty(targetAgent, sceneDebugLog.debugNullValues))
             {
                 return false;               
             }
 
-            destination = targetAgent.transform.position;
-            inRange = characterMove.IsAgentInRange(origin, destination, sceneDebugLog);
-            tooClose = characterMove.IsAgentTooClose(origin, destination, combatController.GetAttackRange(), sceneDebugLog);
+            targetAgentPosition = targetAgent.transform.position;
+            inRange = characterMove.IsAgentInRange(origin, targetAgentPosition, chaseRange, sceneDebugLog);
+            tooClose = characterMove.IsAgentTooClose(origin, targetAgentPosition, combatController.GetAttackRange(), sceneDebugLog);
 
-            if (destination != new Vector3() && inRange && !tooClose)
+            if (targetAgentPosition != new Vector3() && inRange && !tooClose)
             {
-                characterMove.StartMovementAction(destination, sceneDebugLog);
+                targetsKnownPosition = targetAgentPosition; // We want the agent to move to their target's last known position if they're outside of range.
+                debugCharactersCurrentDestination = targetsKnownPosition;
+                characterMove.StartMovementAction(targetsKnownPosition, sceneDebugLog);
                 return true;         
             }
             else
             {
-                characterMove.MovementStopped();
+                // characterMove.MovementStopped();
                 return false;
             }
+        }
+
+        private bool MoveToGaurdPost()
+        {
+            if(characterGuardPosition != new Vector3() &&
+                (targetsKnownPosition != new Vector3() && transform.position == targetsKnownPosition) &&
+                transform.position != characterGuardPosition)
+            {
+                characterMove.StartMovementAction(characterGuardPosition, sceneDebugLog);
+                debugCharactersCurrentDestination = characterGuardPosition;
+                return true;
+            }
+            else
+            {
+                return false;
+            }           
         }
         #endregion
 
@@ -95,7 +124,7 @@ namespace Asset.Player.Controller
             if (IsNullCheck.IsGameObjectNotEmpty(targetAgent, sceneDebugLog.debugNullValues))
             {
                 destination = targetAgent.transform.position;
-                inRange = characterMove.IsAgentInRange(origin, destination, sceneDebugLog);
+                inRange = characterMove.IsAgentInRange(origin, destination, chaseRange, sceneDebugLog);
                 
                 CombatTargetScript combatTarget = targetAgent.GetComponentInParent<CombatTargetScript>();
 
@@ -118,6 +147,15 @@ namespace Asset.Player.Controller
         #endregion
 
         #region Idle Functions
+        #endregion
+
+        #region Debug Functions
+        private void OnDrawGizmosSelected()
+        {
+            sceneDebugLog.DebugDrawAgentsChaseRange(transform.position, chaseRange, Color.cyan);
+            sceneDebugLog.DebugDrawAgentsAttackRange(transform.position, combatController.GetAttackRange(), Color.red);
+            sceneDebugLog.DebugFindAgentsDestination(transform.position, debugCharactersCurrentDestination, Color.cyan);          
+        }
         #endregion
     }
 

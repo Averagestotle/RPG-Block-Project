@@ -19,14 +19,14 @@ namespace Asset.Player.Controller
 
                 if ((debugLogEnabled != null && debugLogEnabled.debugStateLog))
                 {
-                    Debug.Log("Canceling previous action: " + currentAction);
+                    Debug.Log("Starting action: " + action);
                 }                
             };
             
             currentAction = action;
         }
 
-        public void CancelAction(IActionScript action, SceneDebugLogScript debugLogEnabled = null)
+        public void CancelAction(SceneDebugLogScript debugLogEnabled = null)
         {
             if (currentAction == null) return;
 
@@ -36,6 +36,8 @@ namespace Asset.Player.Controller
                 {
                     Debug.Log("Canceling previous action: " + currentAction);
                 }
+
+                StartAction(null);
             }
         }
     }

@@ -71,7 +71,7 @@ namespace Asset.Player.Movement
             }
         }
 
-        public bool IsAgentInRange(Vector3 origin, Vector3 targetOrigin, SceneDebugLogScript DebugEnabled = null)
+        public bool IsAgentInRange(Vector3 origin, Vector3 targetOrigin, float maxDistance, SceneDebugLogScript DebugEnabled = null)
         {
             bool inRange = false;
             if (chaseRange == 0)
@@ -85,7 +85,7 @@ namespace Asset.Player.Movement
 
             if (origin == new Vector3() || targetOrigin == new Vector3()) { return false; }
 
-            inRange = Vector3.Distance(origin, targetOrigin) <= chaseRange;
+            inRange = Vector3.Distance(origin, targetOrigin) <= maxDistance;
             targetDistance = Vector3.Distance(origin, targetOrigin);
 
             if (inRange)

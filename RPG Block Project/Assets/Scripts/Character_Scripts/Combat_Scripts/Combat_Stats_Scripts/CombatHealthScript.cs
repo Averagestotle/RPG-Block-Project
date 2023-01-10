@@ -1,5 +1,7 @@
+using Asset.Player.Controller;
 using System.Collections;
 using System.Collections.Generic;
+using System.DebugLogs;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,12 +13,14 @@ namespace Asset.Player.Combat
         [SerializeField] public float combatHealth = 100f;
         private Animator animator;
         private bool isDeadAlready = false;
+        private SceneDebugLogScript sceneDebugLog = new SceneDebugLogScript();
         #endregion
 
         #region Awake
         private void Awake()
         {
             animator = this.GetComponentInChildren<Animator>();
+            sceneDebugLog = FindObjectOfType<SceneDebugLogScript>();
         }
         #endregion
 
@@ -46,6 +50,7 @@ namespace Asset.Player.Combat
             animator.SetTrigger("Is Dead");
             this.GetComponentInChildren<BoxCollider>().enabled = false;
             this.GetComponentInChildren<NavMeshAgent>().enabled= false;
+            this.GetComponent<ActionSchedulerScript>().CancelAction(sceneDebugLog);
         }
 
         public bool CheckIfDead() 
