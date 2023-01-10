@@ -20,20 +20,29 @@ namespace Asset.Player.Controller
         public float chaseRange;
         public float maxSuspicionTime = Mathf.Infinity;
 
-        private float suspicionTimeCounted = 0F;
+        [SerializeField] PatrolPathScript patrolPath;
+
+        
         private CharacterMoveScript characterMove = new CharacterMoveScript();
         private CombatControllerScript combatController = new CombatControllerScript();
         private CombatHealthScript combatHealth = new CombatHealthScript();
         private CombatTargetScript characterCombatTarget = new CombatTargetScript();
         private IsNullCheckScript IsNullCheck = new IsNullCheckScript();
         private RaycastAgentByComponent raycastAgent = new RaycastAgentByComponent();
-        private SceneDebugLogScript sceneDebugLog = new SceneDebugLogScript();
+        
         private GameObject targetAgent = null;
+
         private Vector3 characterGuardPosition = new Vector3();
         private Vector3 targetsKnownPosition = new Vector3();
 
-        // Debug Gizmos variables
+        private int waypointIndex = 0;
+
+        private float suspicionTimeCounted = 0F;
+
+        // Debug variables
+        private SceneDebugLogScript sceneDebugLog = new SceneDebugLogScript();
         private Vector3 debugCharactersCurrentDestination = new Vector3();
+        public float debugSuspicionTimeCounted = 0F;
         #endregion
 
         #region Start
@@ -100,42 +109,60 @@ namespace Asset.Player.Controller
         }
 
         private bool MoveToGaurdPost()
-        {
-            // Note: Not really liking these if statements, but here it is:
+        {           
             bool inRange = false;
+
+            if (patrolPath != null)
+            {
+                if (characterMove.AgentIsInPosition(this.transform.position, patrolPath.GetWaypoint(waypointIndex)))
+                {
+                    waypointIndex = patrolPath.GetNextWaypoint(waypointIndex);
+                }
+
+                characterGuardPosition = patrolPath.GetWaypoint(waypointIndex);
+            }
 
             if (targetsKnownPosition != new Vector3())
             {
                 inRange = characterMove.IsAgentInRange(transform.position, targetsKnownPosition, 1f, sceneDebugLog);
             }
+            // Note: Not really liking these if statements, but here it is:
 
             // 1) Check to make sure the charcter is at the last known location.
             // 2) They're not at their guard post.
             // 3) The suspicion time counted is greater than the max amount of time allowed to wait.
             // 4) Go to their guard post.
-            if(characterGuardPosition != new Vector3() &&
-                //(targetsKnownPosition != new Vector3() && transform.position == targetsKnownPosition) &&
+            if (characterGuardPosition != new Vector3() &&
                 (targetsKnownPosition != new Vector3() && inRange) &&
                 transform.position != characterGuardPosition &&
                 maxSuspicionTime <= suspicionTimeCounted)
             {
                 // Reset timer and last known location.
                 suspicionTimeCounted = 0;
+
                 targetsKnownPosition = new Vector3();
 
                 characterMove.StartMovementAction(characterGuardPosition, sceneDebugLog);
                 debugCharactersCurrentDestination = characterGuardPosition;
                 return true;
             }
-            // 1) Check to make sure the charcter is at the last known location.
-            // 2) The suspicion timer is suspicion time counted is less than the max amount of time to wait.
-            // 3) Increment the suspicion time counter.
-            else if (targetsKnownPosition != new Vector3() &&
-                // transform.position == targetsKnownPosition &&
-                inRange &&
-                maxSuspicionTime > suspicionTimeCounted)
+            else if (characterGuardPosition != new Vector3() &&
+                transform.position != characterGuardPosition &&
+                //maxSuspicionTime <= suspicionTimeCounted &&
+                targetsKnownPosition == new Vector3())
+            {
+                suspicionTimeCounted = 0;
+
+                characterMove.StartMovementAction(characterGuardPosition, sceneDebugLog);
+                debugCharactersCurrentDestination = characterGuardPosition;
+                return true;
+            }
+            else if (characterGuardPosition != new Vector3() && targetsKnownPosition != new Vector3() &&
+                //(characterMove.AgentIsInPosition(this.transform.position, characterGuardPosition) || inRange))
+                (inRange))
             {
                 suspicionTimeCounted += Time.deltaTime;
+                debugSuspicionTimeCounted = suspicionTimeCounted;
                 return false;
             }
             else

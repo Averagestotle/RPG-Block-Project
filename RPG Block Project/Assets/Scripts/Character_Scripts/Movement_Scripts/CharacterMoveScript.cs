@@ -112,6 +112,17 @@ namespace Asset.Player.Movement
 
             return false;
         }
+
+        public bool AgentIsInPosition(Vector3 a, Vector3 b)
+        {
+            if (a == new Vector3() || b == new Vector3()) { return false; }
+
+            if (a.x == b.x && a.z == b.z)
+            {
+                return true;
+            }
+            return false;
+        }
         #endregion
 
         #region IAction Interface
