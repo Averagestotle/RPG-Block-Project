@@ -19,6 +19,7 @@ namespace Asset.Player.Controller
         public LayerMask combatLayerMask;
         public float chaseRange;
         public float maxSuspicionTime = Mathf.Infinity;
+        public float maxWaypointWaitTime = Mathf.Infinity;
 
         [SerializeField] PatrolPathScript patrolPath;
 
@@ -43,6 +44,7 @@ namespace Asset.Player.Controller
         private SceneDebugLogScript sceneDebugLog = new SceneDebugLogScript();
         private Vector3 debugCharactersCurrentDestination = new Vector3();
         public float debugSuspicionTimeCounted = 0F;
+        public Vector3 debugNextWaypointPosition = new Vector3();
         #endregion
 
         #region Start
@@ -115,12 +117,12 @@ namespace Asset.Player.Controller
             if (patrolPath != null)
             {
                 if (characterMove.AgentIsInPosition(this.transform.position, patrolPath.GetWaypoint(waypointIndex)))
-                {
+                {                   
                     waypointIndex = patrolPath.GetNextWaypoint(waypointIndex);
+                    debugNextWaypointPosition = patrolPath.GetWaypoint(waypointIndex);
                 }
-
                 characterGuardPosition = patrolPath.GetWaypoint(waypointIndex);
-            }
+            }            
 
             if (targetsKnownPosition != new Vector3())
             {
@@ -139,6 +141,7 @@ namespace Asset.Player.Controller
             {
                 // Reset timer and last known location.
                 suspicionTimeCounted = 0;
+                debugSuspicionTimeCounted = suspicionTimeCounted;
 
                 targetsKnownPosition = new Vector3();
 
@@ -148,23 +151,21 @@ namespace Asset.Player.Controller
             }
             else if (characterGuardPosition != new Vector3() &&
                 transform.position != characterGuardPosition &&
-                //maxSuspicionTime <= suspicionTimeCounted &&
                 targetsKnownPosition == new Vector3())
             {
                 suspicionTimeCounted = 0;
+                debugSuspicionTimeCounted = suspicionTimeCounted;
 
                 characterMove.StartMovementAction(characterGuardPosition, sceneDebugLog);
                 debugCharactersCurrentDestination = characterGuardPosition;
                 return true;
             }
-            else if (characterGuardPosition != new Vector3() && targetsKnownPosition != new Vector3() &&
-                //(characterMove.AgentIsInPosition(this.transform.position, characterGuardPosition) || inRange))
-                (inRange))
+            else if (targetsKnownPosition != new Vector3() && (inRange))
             {
                 suspicionTimeCounted += Time.deltaTime;
                 debugSuspicionTimeCounted = suspicionTimeCounted;
                 return false;
-            }
+            }            
             else
             {
                 return false;
