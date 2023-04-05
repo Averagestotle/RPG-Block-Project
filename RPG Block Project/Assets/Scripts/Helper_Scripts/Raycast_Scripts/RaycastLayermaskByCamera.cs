@@ -18,7 +18,9 @@ public class RaycastLayermaskByCamera : MonoBehaviour
 
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         RaycastHit hitInfo;
-        Vector3 destination = new Vector3();        
+        Vector3 destination = new Vector3();
+
+        Debug.Log("Object Detected: " + Physics.Raycast(ray, out hitInfo, Mathf.Infinity, layerMask));
 
         if (Physics.Raycast(ray, out hitInfo, Mathf.Infinity, layerMask))
         {

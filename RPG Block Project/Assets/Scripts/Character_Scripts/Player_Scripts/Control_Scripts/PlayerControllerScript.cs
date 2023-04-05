@@ -29,6 +29,8 @@ namespace Asset.Player.Controller
         private CombatControllerScript combatController= new CombatControllerScript();
         private RaycastLayermaskByCamera raycastLayermaskByCamera = new RaycastLayermaskByCamera();
         private SceneDebugLogScript sceneDebugLog = new SceneDebugLogScript();
+        private MapGeneratorScript generatorScript = new MapGeneratorScript();
+
         #endregion
 
         #region Start
